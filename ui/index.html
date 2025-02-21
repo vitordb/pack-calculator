@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pack Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Pack Calculator</h1>
+
+    <div class="form-group">
+        <label for="packSizes">Pack Sizes (comma separated):</label>
+        <input id="packSizes" type="text" placeholder="e.g. 23,31,53" />
+    </div>
+
+    <div class="form-group">
+        <label for="amount">Amount:</label>
+        <input id="amount" type="number" placeholder="e.g. 500000" />
+    </div>
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="error" class="error"></div>
+    <div id="result" class="result">
+        <pre id="resultContent"></pre>
+    </div>
+</div>
+
+<script>
+    async function calculate() {
+        const errorDiv = document.getElementById('error');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+
+        errorDiv.style.display = 'none';
+        resultDiv.style.display = 'none';
+        resultContent.textContent = '';
+
+        const packSizes = document.getElementById('packSizes').value;
+        const amount = document.getElementById('amount').value;
+
+        const url = `/calculate?amount=${amount}&packs=${packSizes}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                const msg = await response.text();
+                throw new Error(msg || `HTTP error: ${response.status}`);
+            }
+            const data = await response.json();
+
+            resultDiv.style.display = 'block';
+            resultContent.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+            errorDiv.textContent = error.message;
+            errorDiv.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
