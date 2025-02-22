@@ -9,10 +9,12 @@ COPY . .
 
 RUN go build -o pack-calculator ./cmd/main.go
 
-FROM alpine:3.17
+FROM golang:1.24-alpine
 
 WORKDIR /app
+
 COPY --from=builder /app/pack-calculator .
+
 COPY --from=builder /app/ui ./ui
 
 EXPOSE 8080

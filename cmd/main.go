@@ -19,13 +19,17 @@ func main() {
 	e.Use(middleware.Recover())
 
 	repo := repositories.NewInMemoryResultRepository()
-
 	calculatorService := application.NewCalculatorService(repo)
 
 	handlers.Service = calculatorService
 
 	e.GET("/calculate", handlers.CalculateHandler)
+
 	e.Static("/ui", "ui")
+
+	e.GET("/", func(c echo.Context) error {
+		return c.Redirect(301, "/ui")
+	})
 
 	port := os.Getenv("PORT")
 	if port == "" {
